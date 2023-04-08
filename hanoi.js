@@ -6,7 +6,6 @@ let rodC = [];
 rodA = [5, 4, 3, 2, 1];
 let n = rodA.length;
 let moveCount = 1;
-
 let outputArray = [];
 
 function printHanoiLengthFormat(arr1, arr2, arr3) {
@@ -33,10 +32,6 @@ function printHanoiLengthFormat(arr1, arr2, arr3) {
     outputArray.push(output);
 }
 
-
-
-
-
 function printHanoiNumFormat(arr1, arr2, arr3) {
     let result = [];
     let rodHeight = n;
@@ -51,10 +46,6 @@ function printHanoiNumFormat(arr1, arr2, arr3) {
     output += result.map(row => `|${row.join('|')}|\n`).join('');
     outputArray.push(output);
 }
-
-
-
-
 
 function hanoi(numOfDiscs, fromRod, toRod, auxRod) {
     if (numOfDiscs === 1) {
@@ -77,8 +68,7 @@ function hanoi(numOfDiscs, fromRod, toRod, auxRod) {
     hanoi(numOfDiscs - 1, auxRod, toRod, fromRod);
 }
 
-
-
+//start the program
 hanoi(n, rodA, rodC, rodB);
 
 //print it in terminal, make it visualized;
