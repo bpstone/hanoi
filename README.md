@@ -12,7 +12,7 @@ The code also includes two functions to print the state of the rods at each step
 
 Finally, the code includes a loop that prints the state of the rods at each step of the solution in the terminal, and allows the user to pause and resume the animation by pressing the space bar.
 
-## Hanoi Tower 中文注释
+## Hanoi Tower 中文注释.
 
 hanoi.js 中提供的代码解决了汉诺塔的经典问题。该问题由三个杆和一些不同大小的盘组成，这些盘可以滑动到任何杆上。谜题从盘子在一个杆上按升序排列开始，最小的在顶部，从而形成一个圆锥形。谜题的目标是将整个堆栈移动到另一个杆上，遵守以下简单规则：
 
