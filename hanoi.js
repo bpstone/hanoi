@@ -8,92 +8,60 @@ let n = rodA.length;
 let moveCount = 1;
 
 let outputArray = [];
+
 function printHanoiLengthFormat(arr1, arr2, arr3) {
-    let arr1Copy = [...arr1];
-    let arr2Copy = [...arr2];
-    let arr3Copy = [...arr3];
     const result = [];
     let rodHeight = n;
-    while (arr1Copy.length || arr2Copy.length || arr3Copy.length || rodHeight > 0) {
+    while (rodHeight--) {
         const extracted = [];
-        const fixedLength = n+2;
-        if (arr1Copy.length) {
-            const num = arr1Copy.shift();
-            const leftLength = Math.floor((fixedLength - num)/2);
-            const rightLength = fixedLength - num - leftLength;
-            const element = '='.repeat(num).padStart(num + 1, ' ').padEnd(fixedLength, ' ');
-            //const element = '='.repeat(num).padEnd(leftLength + num + rightLength, ' ');
-            extracted.push(element);
-        } else { extracted.push(' '.repeat(fixedLength)) }
-        if (arr2Copy.length) {
-            const num = arr2Copy.shift();
-            const leftLength = Math.floor((fixedLength - num)/2);
-            const rightLength = fixedLength - num - leftLength;
-            const element = '='.repeat(num).padStart(num + 1, ' ').padEnd(fixedLength, ' ');
-            //const element = '='.repeat(num).padEnd(leftLength + num + rightLength, ' ');
-            extracted.push(element);
-        } else { extracted.push(' '.repeat(fixedLength)) }
-        if (arr3Copy.length) {
-            const num = arr3Copy.shift();
-            const leftLength = Math.floor((fixedLength - num)/2);
-            const rightLength = fixedLength - num - leftLength;
-            const element = '='.repeat(num).padStart(num + 1, ' ').padEnd(fixedLength, ' ');
-            //const element = '='.repeat(num).padEnd(leftLength + num + rightLength, ' ');
-            extracted.push(element);
-        } else { extracted.push(' '.repeat(fixedLength)) }
+        const fixedLength = n + 2;
+        [arr1, arr2, arr3].forEach((arr) => {
+            const num = arr[rodHeight];
+            if (num) {
+                const leftLength = Math.floor((fixedLength - num) / 2);
+                const rightLength = fixedLength - num - leftLength;
+                const element = '='.repeat(num).padStart(num + 1, ' ').padEnd(fixedLength, ' ');
+                extracted.push(element);
+            } else {
+                extracted.push(' '.repeat(fixedLength));
+            }
+        });
         result.push(extracted);
-        rodHeight--;
     }
-    let output = '';
-    output+= '----' + 'step ' + moveCount + '----' + '\n';
-    for (let i = result.length - 1; i >= 0; i--) {
-        output += '|' + result[i].join('|') + '|\n';
-    }
-
-
-    
-    //console.log(output);
+    let output = `----step ${moveCount}----\n`;
+    output += result.map(row => `|${row.join('|')}|\n`).join('');
     outputArray.push(output);
 }
+
+
+
+
 
 function printHanoiNumFormat(arr1, arr2, arr3) {
-    let arr1Copy = [...arr1];
-    let arr2Copy = [...arr2];
-    let arr3Copy = [...arr3];
-    const result = [];
+    let result = [];
     let rodHeight = n;
-    while (arr1Copy.length || arr2Copy.length || arr3Copy.length || rodHeight > 0) {
-        const extracted = [];
-        if (arr1Copy.length) {
-            extracted.push(arr1Copy.shift());
-        } else { extracted.push(' ') }
-        if (arr2Copy.length) {
-            extracted.push(arr2Copy.shift());
-        } else { extracted.push(' ') }
-        if (arr3Copy.length) {
-            extracted.push(arr3Copy.shift());
-        } else { extracted.push(' ') }
-        result.push(extracted);
-        rodHeight--;
+    while (rodHeight--) {
+        result.push([
+            arr1[rodHeight] || ' ',
+            arr2[rodHeight] || ' ',
+            arr3[rodHeight] || ' '
+        ]);
     }
-    let output = '';
-    output+= '----' + 'step ' + moveCount + '----' + '\n';
-    for (let i = result.length - 1; i >= 0; i--) {
-        output += '|' + result[i].join('|') + '|\n';
-    }
-    
-    //console.log(output);
+    let output = `----step ${moveCount}----\n`;
+    output += result.map(row => `|${row.join('|')}|\n`).join('');
     outputArray.push(output);
 }
 
 
-let print
+
+
+
 function hanoi(numOfDiscs, fromRod, toRod, auxRod) {
     if (numOfDiscs === 1) {
         //console.log(`step ${moveCount++}: Move disk 1 from rod ${fromRod} to rod ${toRod}`);
         
         toRod.push(fromRod.pop());
-        printHanoiNumFormat(rodA, rodB, rodC);
+        printHanoiLengthFormat(rodA, rodB, rodC);
         moveCount++;
         return;
     }
@@ -104,7 +72,7 @@ function hanoi(numOfDiscs, fromRod, toRod, auxRod) {
     toRod.push(fromRod.pop());
     
     // Move the n-1 discs from the auxiliary rod to the destination rod
-    printHanoiNumFormat(rodA, rodB, rodC)
+    printHanoiLengthFormat(rodA, rodB, rodC)
     moveCount++;
     hanoi(numOfDiscs - 1, auxRod, toRod, fromRod);
 }
