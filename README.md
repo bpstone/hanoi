@@ -1,3 +1,59 @@
+# Tower of Hanoi Visualization
+
+An interactive visualization of the Tower of Hanoi puzzle solution, built with HTML, CSS, and JavaScript.
+
+## Features
+
+- Visual representation of the Tower of Hanoi puzzle with 5 disks
+- Interactive controls:
+  - Start/Restart button to begin or restart the animation
+  - Play/Pause button to control animation flow
+  - Reset button to return to initial state
+  - Previous/Next buttons for step-by-step movement visualization
+- Background music with volume control
+- Smooth disk movement animations
+- Step counter to track progress
+- Responsive design
+
+## Controls
+
+- **Start/Restart**: Begin the animation or restart from the beginning
+- **Play/Pause**: Control the animation flow
+- **Reset**: Return all disks to their initial position
+- **Previous (←)**: Move one step backward in the solution
+- **Next (→)**: Move one step forward in the solution
+- **Music Toggle**: Turn background music on/off
+- **Volume Slider**: Adjust music volume
+
+## How to Run
+
+1. Clone this repository
+2. Open the project directory
+3. Start a local web server (e.g., using Python's built-in server):
+   ```bash
+   python3 -m http.server 8000
+   ```
+4. Open your web browser and navigate to:
+   ```
+   http://localhost:8000
+   ```
+
+## Technical Implementation
+
+- Pure JavaScript implementation without external dependencies
+- CSS animations for smooth disk movements
+- Recursive algorithm for solving the Tower of Hanoi puzzle
+- State management for tracking moves and animation progress
+
+## Authors
+
+- Qinran Li
+- Baoping Li
+
+## License
+
+MIT License
+
 ## Explanation of Hanoi Tower Code
 
 The provided code in hanoi.js solves the classic problem of the Tower of Hanoi. The problem consists of three rods and a number of disks of different sizes, which can slide onto any rod. The puzzle starts with the disks in a neat stack in ascending order of size on one rod, the smallest at the top, thus making a conical shape. The objective of the puzzle is to move the entire stack to another rod, obeying the following simple rules:
@@ -11,17 +67,3 @@ The code uses recursion to solve the problem. The hanoi function takes three par
 The code also includes two functions to print the state of the rods at each step of the solution. The printHanoiLengthFormat function prints the state of the rods in a visual format, where the disks are represented by equal signs of varying lengths. The printHanoiNumFormat function prints the state of the rods in a numerical format, where the disks are represented by their size.
 
 Finally, the code includes a loop that prints the state of the rods at each step of the solution in the terminal, and allows the user to pause and resume the animation by pressing the space bar.
-
-## Hanoi Tower 中文注释..
-
-hanoi.js 中提供的代码解决了汉诺塔的经典问题。该问题由三个杆和一些不同大小的盘组成，这些盘可以滑动到任何杆上。谜题从盘子在一个杆上按升序排列开始，最小的在顶部，从而形成一个圆锥形。谜题的目标是将整个堆栈移动到另一个杆上，遵守以下简单规则：
-
-1. 一次只能移动一个盘子。
-2. 每次移动都包括从一个堆栈中取出上面的盘子，并将其放在另一个堆栈或空杆上。
-3. 不能将盘子放在较小的盘子上面。
-
-代码使用递归来解决问题。hanoi 函数接受三个参数：盘子的数量，要移动盘子的杆，要移动盘子的杆和辅助杆。基本情况是只有一个盘子的情况，在这种情况下，函数只是将盘子从源杆移动到目标杆。否则，函数递归地将源杆上面的前 n-1 个盘子移动到辅助杆上，然后将第 n 个盘子从源杆移动到目标杆上，最后将辅助杆上的 n-1 个盘子移动到目标杆上。
-
-代码还包括两个函数，用于在解决方案的每个步骤中打印杆的状态。printHanoiLengthFormat 函数以可视格式打印杆的状态，其中盘子由长度不同的等号表示。printHanoiNumFormat 函数以数字格式打印杆的状态，其中盘子由其大小表示。
-
-最后，代码包括一个循环，在终端中打印解决方案的每个步骤的杆的状态，并允许用户通过按空格键暂停和恢复动画。

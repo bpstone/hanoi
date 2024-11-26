@@ -1,106 +1,248 @@
-
+// Initialize the game state
 let rodA = [];
 let rodB = [];
 let rodC = [];
-
-rodA = [5, 4, 3, 2, 1];
-let n = rodA.length;
+let n = 5;
 let moveCount = 1;
-let outputArray = [];
+let moves = [];
+let intervalId = null;
+let currentMoveIndex = 0;
+let isPaused = true;
 
-function printHanoiLengthFormat(arr1, arr2, arr3) {
-    const result = [];
-    let rodHeight = n;
-    while (rodHeight--) {
-        const extracted = [];
-        const fixedLength = n + 2;
-        [arr1, arr2, arr3].forEach((arr) => {
-            const num = arr[rodHeight];
-            if (num) {
-                const leftLength = Math.floor((fixedLength - num) / 2);
-                const rightLength = fixedLength - num - leftLength;
-                const element = '='.repeat(num).padStart(num + 1, ' ').padEnd(fixedLength, ' ');
-                extracted.push(element);
-            } else {
-                extracted.push(' '.repeat(fixedLength));
-            }
-        });
-        result.push(extracted);
+// Initialize the discs and generate moves
+function initializeGame() {
+    // Reset all variables
+    rodA = [];
+    rodB = [];
+    rodC = [];
+    moves = [];
+    moveCount = 1;
+    currentMoveIndex = 0;
+    
+    // Initialize discs on rod A
+    for (let i = n; i > 0; i--) {
+        rodA.push(i);
     }
-    let output = `----step ${moveCount}----\n`;
-    output += result.map(row => `|${row.join('|')}|\n`).join('');
-    outputArray.push(output);
+    
+    // Add initial state
+    moves.push({
+        a: [...rodA],
+        b: [],
+        c: [],
+        step: 1
+    });
+    
+    // Generate all moves
+    hanoi(n, rodA, rodC, rodB);
+    
+    // Reset to initial state
+    rodA = moves[0].a.slice();
+    rodB = moves[0].b.slice();
+    rodC = moves[0].c.slice();
+    
+    // Display initial state
+    updateVisualization();
 }
 
-function printHanoiNumFormat(arr1, arr2, arr3) {
-    let result = [];
-    let rodHeight = n;
-    while (rodHeight--) {
-        result.push([
-            arr1[rodHeight] || ' ',
-            arr2[rodHeight] || ' ',
-            arr3[rodHeight] || ' '
-        ]);
-    }
-    let output = `----step ${moveCount}----\n`;
-    output += result.map(row => `|${row.join('|')}|\n`).join('');
-    outputArray.push(output);
+// Function to create a move snapshot
+function createMoveSnapshot() {
+    moves.push({
+        a: [...rodA],
+        b: [...rodB],
+        c: [...rodC],
+        step: moveCount
+    });
+    moveCount++;
 }
 
+// Hanoi algorithm
 function hanoi(numOfDiscs, fromRod, toRod, auxRod) {
     if (numOfDiscs === 1) {
-        //console.log(`step ${moveCount++}: Move disk 1 from rod ${fromRod} to rod ${toRod}`);
-        
         toRod.push(fromRod.pop());
-        printHanoiLengthFormat(rodA, rodB, rodC);
-        moveCount++;
+        createMoveSnapshot();
         return;
     }
-    // Move n-1 discs from the source rod to the auxiliary rod
     hanoi(numOfDiscs - 1, fromRod, auxRod, toRod);
-    // Move the remaining disc from the source rod to the destination rod
-    //console.log(`step ${moveCount++}:Move disk ${numOfDiscs} from rod ${fromRod} to rod ${toRod}`);
     toRod.push(fromRod.pop());
-    
-    // Move the n-1 discs from the auxiliary rod to the destination rod
-    printHanoiLengthFormat(rodA, rodB, rodC)
-    moveCount++;
+    createMoveSnapshot();
     hanoi(numOfDiscs - 1, auxRod, toRod, fromRod);
 }
 
-//start the program
-hanoi(n, rodA, rodC, rodB);
+// Update the visual representation
+function updateVisualization() {
+    const state = currentMoveIndex === 0 ? {
+        a: rodA,
+        b: rodB,
+        c: rodC,
+        step: 1
+    } : moves[currentMoveIndex];
+    
+    if (!state) return;
 
-//print it in terminal, make it visualized;
-let i = 0;
-let isPaused = false;
-const intervalId = setInterval(() => {
-    if (!isPaused) {
-        console.clear();
-        console.log(outputArray[i]);
-        i++;
-        if (i === outputArray.length) {
+    document.getElementById('step-counter').textContent = `Step: ${state.step}`;
+
+    // Update each rod
+    ['a', 'b', 'c'].forEach((rod, index) => {
+        const rodElement = document.getElementById(`rod${index + 1}`);
+        rodElement.innerHTML = '';
+        
+        state[rod].forEach(size => {
+            const disc = document.createElement('div');
+            disc.className = 'disc';
+            disc.style.width = `${size * 30}px`;
+            rodElement.appendChild(disc);
+        });
+    });
+}
+
+// Animation control functions
+function startAnimation() {
+    if (isPaused) {
+        isPaused = false;
+        document.getElementById('startBtn').textContent = 'Restart';
+        document.getElementById('playPauseBtn').textContent = 'Pause';
+        if (currentMoveIndex >= moves.length) {
+            currentMoveIndex = 0;
+        }
+        animate();
+    } else {
+        resetAnimation();
+        startAnimation();
+    }
+}
+
+function togglePlayPause() {
+    if (isPaused) {
+        // Resume animation
+        if (currentMoveIndex < moves.length) {
+            isPaused = false;
+            document.getElementById('playPauseBtn').textContent = 'Pause';
+            animate();
+        }
+    } else {
+        // Pause animation
+        isPaused = true;
+        document.getElementById('playPauseBtn').textContent = 'Resume';
+        if (intervalId) {
             clearInterval(intervalId);
-            process.exit(); // exit when finished
         }
     }
-}, 1000);
+}
 
-const readline = require('readline');
-readline.emitKeypressEvents(process.stdin);
-process.stdin.setRawMode(true);
-
-process.stdin.on('keypress', (str, key) => {
-    if (key.ctrl && key.name === 'c') {
-        process.exit();
-    } else if (key.name === 'space') {
-        isPaused = !isPaused;
+function resetAnimation() {
+    isPaused = true;
+    document.getElementById('playPauseBtn').textContent = 'Pause';
+    if (intervalId) {
+        clearInterval(intervalId);
     }
+    currentMoveIndex = 0;
+    document.getElementById('startBtn').textContent = 'Start';
+    initializeGame();
+    updateVisualization();
+}
+
+function animate() {
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+    
+    intervalId = setInterval(() => {
+        if (currentMoveIndex >= moves.length) {
+            pauseAnimation();
+            return;
+        }
+        
+        if (!isPaused) {
+            updateVisualization();
+            currentMoveIndex++;
+        }
+    }, 1000);
+}
+
+function pauseAnimation() {
+    isPaused = true;
+    document.getElementById('playPauseBtn').textContent = 'Resume';
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+}
+
+// Navigation functions
+function previousMove() {
+    if (currentMoveIndex > 0) {
+        currentMoveIndex--;
+        updateVisualization();
+    }
+}
+
+function nextMove() {
+    if (currentMoveIndex < moves.length - 1) {
+        currentMoveIndex++;
+        updateVisualization();
+    }
+}
+
+// Music control functions
+let isMusicPlaying = false;
+const bgMusic = document.getElementById('bgMusic');
+const toggleMusicBtn = document.getElementById('toggleMusic');
+const volumeSlider = document.getElementById('volumeSlider');
+const audioStatus = document.getElementById('audioStatus');
+
+function toggleMusic() {
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        toggleMusicBtn.innerHTML = '🔇 Music Off';
+        audioStatus.textContent = 'Music paused';
+    } else {
+        const playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                toggleMusicBtn.innerHTML = '🔊 Music On';
+                audioStatus.textContent = 'Playing music';
+            })
+            .catch(error => {
+                console.log("Audio playback failed:", error);
+                audioStatus.textContent = 'Failed to play music';
+            });
+        }
+    }
+    isMusicPlaying = !isMusicPlaying;
+}
+
+function updateVolume() {
+    bgMusic.volume = volumeSlider.value / 100;
+    audioStatus.textContent = `Volume: ${volumeSlider.value}%`;
+}
+
+// Initialize the game
+document.addEventListener('DOMContentLoaded', () => {
+    // Set up event listeners
+    document.getElementById('startBtn').addEventListener('click', startAnimation);
+    document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+    document.getElementById('resetBtn').addEventListener('click', resetAnimation);
+    document.getElementById('prevBtn').addEventListener('click', previousMove);
+    document.getElementById('nextBtn').addEventListener('click', nextMove);
+    
+    // Set up music controls
+    toggleMusicBtn.addEventListener('click', toggleMusic);
+    volumeSlider.addEventListener('input', updateVolume);
+    bgMusic.volume = volumeSlider.value / 100;
+    
+    // Audio loading status
+    bgMusic.addEventListener('loadeddata', () => {
+        audioStatus.textContent = 'Music loaded';
+        toggleMusicBtn.disabled = false;
+    });
+    
+    bgMusic.addEventListener('error', (e) => {
+        audioStatus.textContent = 'Error loading music';
+        console.error('Audio error:', e);
+    });
+    
+    // Initialize the game
+    initializeGame();
+    
+    // Set initial button state
+    document.getElementById('playPauseBtn').textContent = 'Pause';
 });
-
-
-
-
-
-
-
